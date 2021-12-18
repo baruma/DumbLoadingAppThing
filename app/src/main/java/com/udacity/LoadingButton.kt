@@ -1,5 +1,7 @@
 package com.udacity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -22,13 +24,15 @@ class LoadingButton @JvmOverloads constructor(
 
     private var valueAnimator = ValueAnimator()
 
-    // Colors
+    private lateinit var buttonLabel: String
+
+    // Colors - unused.
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.customBlue, null)
-    private val transformColor = ResourcesCompat.getColor(resources, R.color.customNavy, null)
+//    private val transformColor = ResourcesCompat.getColor(resources, R.color.customNavy, null)
 
     // Paint
     private val paint = Paint().apply {
-        color = backgroundColor
+//        color = backgroundColor
         isAntiAlias = true
 //        isDither = true
 //        style = Paint.Style.STROKE
@@ -36,20 +40,38 @@ class LoadingButton @JvmOverloads constructor(
 
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Ready) { p, old, new ->
         when (new) {
+
             ButtonState.Ready -> {
+                // Include if/else check for whether radio button was selected
+                buttonLabel = "ready to download"
                 valueAnimator = ValueAnimator.ofFloat(0f, widthSize.toFloat())
                 valueAnimator.setDuration(5000)
                 valueAnimator.addUpdateListener { animation ->
                     rectProgressWidth = animation.animatedValue as Float
-//                    invalidate()
+                    invalidate()
                 }
             }
 
             ButtonState.Downloading -> {
-
+//                valueAnimator.cancel()
+                buttonLabel = "downloading, please wait"
+                rectProgressWidth = 0f
+                invalidate()
             }
         }
+
+//        valueAnimator.addListener(object : AnimatorListenerAdapter(){
+//            override fun onAnimationEnd(animation: Animator?) {
+//                rectProgressWidth = 0f
+//                if(buttonState == ButtonState.Ready){
+//                    buttonState = ButtonState.Ready
+//                }
+//            }
+//        })
+//        valueAnimator.start()
+
     }
+
 
     init {
 
@@ -76,6 +98,7 @@ class LoadingButton @JvmOverloads constructor(
         drawBackgroundColor(canvas)
 
         // 2.button animation (left to right)
+        drawButtonProgressAnimation(canvas)
         // 3. Progress circle
         // 4. text (static)
     }
@@ -85,6 +108,9 @@ class LoadingButton @JvmOverloads constructor(
         canvas?.drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), paint)
     }
 
-
+    private fun drawButtonProgressAnimation(canvas: Canvas?) {
+        paint.color = resources.getColor(android.R.color.holo_red_dark)
+        canvas?.drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), paint)
+    }
 
 }
