@@ -38,7 +38,6 @@ class PlaygroundButton
         va.start()
     }
 
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         drawButtonProgressAnimation(canvas)
