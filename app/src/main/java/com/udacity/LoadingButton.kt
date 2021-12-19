@@ -45,7 +45,7 @@ class LoadingButton @JvmOverloads constructor(
                 // Include if/else check for whether radio button was selected
                 buttonLabel = "ready to download"
                 valueAnimator = ValueAnimator.ofFloat(0f, widthSize.toFloat())
-                valueAnimator.setDuration(5000)
+                valueAnimator.setDuration(3000)
                 valueAnimator.addUpdateListener { animation ->
                     rectProgressWidth = animation.animatedValue as Float
                     invalidate()
@@ -59,6 +59,8 @@ class LoadingButton @JvmOverloads constructor(
                 invalidate()
             }
         }
+
+        valueAnimator.start()
 
 //        valueAnimator.addListener(object : AnimatorListenerAdapter(){
 //            override fun onAnimationEnd(animation: Animator?) {

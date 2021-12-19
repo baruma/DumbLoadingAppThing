@@ -28,11 +28,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-
-        custom_button.setOnClickListener {
-            download()
-        }
+//        registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+//
+//        custom_button.setOnClickListener {
+//            download()
+//        }
+//
+        val intent = Intent(this, Playground::class.java)
+        startActivity(intent)
     }
 
     private val receiver = object : BroadcastReceiver() {
