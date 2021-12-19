@@ -9,6 +9,36 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/customNavy"
+        android:layout_margin="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/githubButton"
+            android:background="@color/white"
+            android:text="Github Starter Project"/>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/glideButton"
+            android:background="@color/white"
+            android:text="Glide"/>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/retrofitButton"
+            android:background="@color/white"
+            android:text="Retrofit Button"/>
+
+    </RadioGroup>
+
     <com.udacity.LoadingButton
         android:id="@+id/custom_button"
         android:layout_width="0dp"

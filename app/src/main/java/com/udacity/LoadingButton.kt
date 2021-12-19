@@ -109,7 +109,7 @@ class LoadingButton @JvmOverloads constructor(
 
     private fun drawCircleProgressAnimation(canvas: Canvas?) {
         paint.color = resources.getColor(android.R.color.holo_green_light)
-        canvas?.drawArc(RectF(0f, 0f, 200f, 200f), 270f, progress * 360f, true, paint )
+        canvas?.drawArc(RectF(0f, 0f, 100f, 100f), 270f, progress * 360f, true, paint )
     }
 
 }
