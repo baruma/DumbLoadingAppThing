@@ -27,7 +27,6 @@ class LoadingButton @JvmOverloads constructor(
     private lateinit var buttonLabel: String
 
     private val paint = Paint().apply {
-//        color = backgroundColor
         isAntiAlias = true
 //        isDither = true
 //        style = Paint.Style.STROKE
@@ -35,7 +34,6 @@ class LoadingButton @JvmOverloads constructor(
 
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Ready) { p, old, new ->
         when (new) {
-// Set up label in XML - I forgot to
             ButtonState.Ready -> {
                 buttonLabel = "Ready to Download"
             }

@@ -9,8 +9,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -18,6 +21,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.content_main.view.*
 
+/*
+Flow
+
+The flow should be that once the user should hit a radio button
+
+There should be a check for whether or not a radio button has been hit - otherwise TOAST.
+
+If the radio button was hit, correspond that button with the download link somehow.
+
+Download should only happen once the loading button is hit.
+ */
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
     private var selectedURL: String = ""
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,20 +51,39 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         val button = findViewById<LoadingButton>(R.id.custom_button)
+//        val selectionGroup = findViewById<RadioGroup>(R.id.downloadSelectionGroup)
         button.setOnClickListener {
-            // Upon button click, animate the button itself.  You need to access state in order to do this.
 
-            if (selectedURL.isEmpty()) {
-                Toast.makeText(this, "Please make a selection, dumb dumb", Toast.LENGTH_LONG).show()
+            // Change this check to - ifRadioButton is not selected, otherwise do else.
+            if (downloadSelectionGroup.checkedRadioButtonId == -1) {
+                // no radio button chosen
+                Toast.makeText(this, "Please make a selection, ya dummy", Toast.LENGTH_SHORT).show()
             } else {
+                // radio button chosen
                 button.setState(ButtonState.Downloading)
-                download()
+                //download()
             }
         }
 
 //        val intent = Intent(this, Playground::class.java)
 //        startActivity(intent)
     }
+
+    fun onRadioButtonClicked() {
+        val githubButton = findViewById<RadioButton>(R.id.githubButton)
+        val glideButton = findViewById<RadioButton>(R.id.glideButton)
+        val retrofitButton = findViewById<RadioButton>(R.id.retrofitButton)
+
+        downloadSelectionGroup.setOnCheckedChangeListener { _, checkedId ->
+            when(checkedId){
+        //        R.id.githubButton ->
+             //   R.id.glideButton -> Color.GREEN
+                //R.id.retrofitButton -> Color.BLUE
+            }
+        }
+
+    }
+
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
