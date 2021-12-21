@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
@@ -19,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.content_main.view.*
 
 /*
 Flow
@@ -56,33 +54,64 @@ class MainActivity : AppCompatActivity() {
 
             // Change this check to - ifRadioButton is not selected, otherwise do else.
             if (downloadSelectionGroup.checkedRadioButtonId == -1) {
-                // no radio button chosen
                 Toast.makeText(this, "Please make a selection, ya dummy", Toast.LENGTH_SHORT).show()
             } else {
-                // radio button chosen
+//                button.setState(ButtonState.Downloading)
+//                download(selectedURL)
+//                downloadSelectionGroup.setOnClickListener {
+//                    onRadioButtonClicked(this.downloadSelectionGroup)
+
+//                }
+
+                downloadSelectionGroup.setOnClickListener {
+                    onRadioButtonClicked(this.downloadSelectionGroup)
+                }
                 button.setState(ButtonState.Downloading)
-                //download()
             }
+
         }
+
+//        downloadSelectionGroup.setOnClickListener {
+//            onRadioButtonClicked(this.downloadSelectionGroup)
+//        }
 
 //        val intent = Intent(this, Playground::class.java)
 //        startActivity(intent)
     }
 
-    fun onRadioButtonClicked() {
-        val githubButton = findViewById<RadioButton>(R.id.githubButton)
-        val glideButton = findViewById<RadioButton>(R.id.glideButton)
-        val retrofitButton = findViewById<RadioButton>(R.id.retrofitButton)
+    fun onRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            // Is the button now checked?
+            val checked = view.isChecked
 
-        downloadSelectionGroup.setOnCheckedChangeListener { _, checkedId ->
-            when(checkedId){
-        //        R.id.githubButton ->
-             //   R.id.glideButton -> Color.GREEN
-                //R.id.retrofitButton -> Color.BLUE
+            // Check which radio button was clicked
+            when (view.getId()) {
+                R.id.githubButton ->
+                    if (checked) {
+                        selectedURL = STARTER_URL
+                    }
+                R.id.glideButton ->
+                    if (checked) {
+                        selectedURL = GLIDE_URL
+                    }
+                R.id.retrofitButton ->
+                    if (checked) {
+                        selectedURL = RETROFIT_URL
+                    }
             }
         }
-
     }
+
+//    fun onRadioButtonClicked() {
+//        downloadSelectionGroup.setOnCheckedChangeListener { _, checkedId ->
+//            selectedURL = when(checkedId){
+//                R.id.githubButton -> STARTER_URL
+//                R.id.glideButton -> GLIDE_URL
+//                R.id.retrofitButton -> RETROFIT_URL
+//                else -> {""}
+//            }
+//        }
+//    }
 
 
     private val receiver = object : BroadcastReceiver() {
@@ -92,9 +121,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // set up a listener to observe for error case to set state back to Ready state.
-    private fun download() {
+    private fun download(url: String) {
         val request =
-            DownloadManager.Request(Uri.parse(selectedURL))
+            DownloadManager.Request(Uri.parse(url))
                 .setTitle(getString(R.string.app_name))
                 .setDescription(getString(R.string.app_description))
                 .setRequiresCharging(false)

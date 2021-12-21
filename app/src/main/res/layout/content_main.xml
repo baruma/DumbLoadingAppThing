@@ -23,17 +23,20 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:id="@+id/githubButton"
+            android:onClick="onRadioButtonClicked"
             android:background="@color/white"
             android:text="Github Starter Project"/>
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:onClick="onRadioButtonClicked"
             android:id="@+id/glideButton"
             android:background="@color/white"
             android:text="Glide"/>
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:onClick="onRadioButtonClicked"
             android:id="@+id/retrofitButton"
             android:background="@color/white"
             android:text="Retrofit Button"/>
