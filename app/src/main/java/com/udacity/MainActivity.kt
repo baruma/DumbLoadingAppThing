@@ -1,6 +1,7 @@
 package com.udacity
 
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -8,7 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.nfc.Tag
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
@@ -41,11 +45,20 @@ class MainActivity : AppCompatActivity() {
 
     private var selectedURL: String = ""
 
+    var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+//    .setSmallIcon(R.drawable.notification_icon)
+        .setContentTitle("My notification")
+        .setContentText("Much longer text that cannot fit one line...")
+        .setStyle(NotificationCompat.BigTextStyle()
+            .bigText("Much longer text that cannot fit one line..."))
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        createNotificationChannel()
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         val button = findViewById<LoadingButton>(R.id.custom_button)
@@ -62,11 +75,9 @@ class MainActivity : AppCompatActivity() {
 //                    onRadioButtonClicked(this.downloadSelectionGroup)
 
 //                }
-
-                downloadSelectionGroup.setOnClickListener {
-                    onRadioButtonClicked(this.downloadSelectionGroup)
-                }
                 button.setState(ButtonState.Downloading)
+                Log.d("Lookatme", "onCreate: $selectedURL")
+                download(selectedURL)
             }
 
         }
@@ -102,18 +113,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    fun onRadioButtonClicked() {
-//        downloadSelectionGroup.setOnCheckedChangeListener { _, checkedId ->
-//            selectedURL = when(checkedId){
-//                R.id.githubButton -> STARTER_URL
-//                R.id.glideButton -> GLIDE_URL
-//                R.id.retrofitButton -> RETROFIT_URL
-//                else -> {""}
-//            }
-//        }
-//    }
-
-
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -147,4 +146,24 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // Notifification Code
+
+    // Call this as soon as app starts
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 }
+
