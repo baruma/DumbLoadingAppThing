@@ -20,45 +20,24 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-
-/*
-Flow
-
-The flow should be that once the user should hit a radio button
-
-There should be a check for whether or not a radio button has been hit - otherwise TOAST.
-
-If the radio button was hit, correspond that button with the download link somehow.
-
-Download should only happen once the loading button is hit.
- */
 
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
     private var selectedURL: String = ""
-
-    var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//    .setSmallIcon(R.drawable.notification_icon)
-        .setContentTitle("My notification")
-        .setContentText("Much longer text that cannot fit one line...")
-        .setStyle(NotificationCompat.BigTextStyle()
-            .bigText("Much longer text that cannot fit one line..."))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        createNotificationChannel()
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         val button = findViewById<LoadingButton>(R.id.custom_button)
@@ -69,25 +48,15 @@ class MainActivity : AppCompatActivity() {
             if (downloadSelectionGroup.checkedRadioButtonId == -1) {
                 Toast.makeText(this, "Please make a selection, ya dummy", Toast.LENGTH_SHORT).show()
             } else {
-//                button.setState(ButtonState.Downloading)
-//                download(selectedURL)
-//                downloadSelectionGroup.setOnClickListener {
-//                    onRadioButtonClicked(this.downloadSelectionGroup)
-
-//                }
                 button.setState(ButtonState.Downloading)
                 Log.d("Lookatme", "onCreate: $selectedURL")
                 download(selectedURL)
+//                with(NotificationManagerCompat.from(this)) {
+//                    notify(1, builder.build())
+//                }
             }
 
         }
-
-//        downloadSelectionGroup.setOnClickListener {
-//            onRadioButtonClicked(this.downloadSelectionGroup)
-//        }
-
-//        val intent = Intent(this, Playground::class.java)
-//        startActivity(intent)
     }
 
     fun onRadioButtonClicked(view: View) {
@@ -141,29 +110,6 @@ class MainActivity : AppCompatActivity() {
             "https://github.com/bumptech/glide"
         private const val RETROFIT_URL =
             "https://github.com/square/retrofit"
-
-        private const val CHANNEL_ID = "channelId"
-
     }
 
-    // Notifification Code
-
-    // Call this as soon as app starts
-    private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
 }
-
