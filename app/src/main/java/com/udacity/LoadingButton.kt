@@ -1,19 +1,12 @@
 package com.udacity
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.icu.util.Measure
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
@@ -24,38 +17,30 @@ class LoadingButton @JvmOverloads constructor(
     private var heightSize = 0
     private var progress = 0f
 
-    private lateinit var buttonLabel: String
+    private var buttonLabel = ""
 
     private val paint = Paint().apply {
         isAntiAlias = true
-//        isDither = true
-//        style = Paint.Style.STROKE
     }
 
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Ready) { p, old, new ->
         when (new) {
             ButtonState.Ready -> {
                 buttonLabel = "Ready to Download"
+                invalidate()
             }
 
             ButtonState.Downloading -> {
-//                valueAnimator.cancel()
-//                buttonLabel = "downloading, please wait"
-//                rectProgressWidth = 0f
                 buttonLabel = "Downloading"
                 startLoadAnimation()
-//                invalidate()
             }
         }
-
-//        valueAnimator.start()
 
     }
 
     fun setState(state: ButtonState) {
         buttonState = state
     }
-
 
     init {
 
@@ -76,10 +61,14 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        drawBackgroundColor(canvas)
-        drawButtonProgressAnimation(canvas)
-        drawCircleProgressAnimation(canvas)
+        if (progress == 1f) {
+            drawBackgroundColor(canvas)
+        } else {
+            drawBackgroundColor(canvas)
+            drawButtonProgressAnimation(canvas)
+            drawCircleProgressAnimation(canvas)
+        }
+        drawText(canvas, buttonLabel)
     }
 
     private fun startLoadAnimation() {
@@ -89,7 +78,6 @@ class LoadingButton @JvmOverloads constructor(
             override fun onAnimationUpdate(animation: ValueAnimator) {
                 progress = animation.animatedFraction
                 invalidate()
-//                Log.d("TAG", "startLoadAnimation: ${animation.animatedFraction}")
             }
         })
         va.start()
@@ -108,6 +96,12 @@ class LoadingButton @JvmOverloads constructor(
     private fun drawCircleProgressAnimation(canvas: Canvas?) {
         paint.color = resources.getColor(android.R.color.holo_green_light)
         canvas?.drawArc(RectF(0f, 0f, 100f, 100f), 270f, progress * 360f, true, paint )
+    }
+
+    private fun drawText(canvas: Canvas?, label: String) {
+        paint.color = resources.getColor(android.R.color.white)
+        paint.textSize = 50f
+        canvas?.drawText(label, 50f, 60f, paint)
     }
 
 }

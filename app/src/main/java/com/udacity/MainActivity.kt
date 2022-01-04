@@ -1,26 +1,19 @@
 package com.udacity
 
 import android.app.DownloadManager
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.nfc.Tag
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -30,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var action: NotificationCompat.Action
-
+    private lateinit var loadingButton: LoadingButton
     private var selectedURL: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,23 +33,20 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        val button = findViewById<LoadingButton>(R.id.custom_button)
-//        val selectionGroup = findViewById<RadioGroup>(R.id.downloadSelectionGroup)
-        button.setOnClickListener {
+        loadingButton = findViewById<LoadingButton>(R.id.custom_button)
+        loadingButton.setOnClickListener {
 
             // Change this check to - ifRadioButton is not selected, otherwise do else.
             if (downloadSelectionGroup.checkedRadioButtonId == -1) {
                 Toast.makeText(this, "Please make a selection, ya dummy", Toast.LENGTH_SHORT).show()
             } else {
-                button.setState(ButtonState.Downloading)
+                loadingButton.setState(ButtonState.Downloading)
                 Log.d("Lookatme", "onCreate: $selectedURL")
                 download(selectedURL)
-//                with(NotificationManagerCompat.from(this)) {
-//                    notify(1, builder.build())
-//                }
-            }
 
+            }
         }
+        loadingButton.setState(ButtonState.Ready)
     }
 
     fun onRadioButtonClicked(view: View) {
@@ -101,6 +91,19 @@ class MainActivity : AppCompatActivity() {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         downloadID =
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+
+        val onComplete: BroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(ctxt: Context, intent: Intent) {
+                // your code
+                val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if (id == downloadID) {
+                    //create notification
+                    LoadingApp.instance?.notificationManager?.createNotification()
+                    loadingButton.setState(ButtonState.Ready)
+                }
+            }
+        }
+        registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     companion object {
